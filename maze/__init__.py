@@ -78,14 +78,3 @@ class RandomMaze:
         zeros = np.zeros_like(self.maze[-1])
         zeros[choice(inds)] = 1
         self.maze = np.vstack((self.maze, zeros))
-
-
-
-
-
-if __name__ == "__main__":
-    t = time.time()
-    maze = RandomMaze((500, 500))
-    print(time.time() - t)
-    solver = DeadEndCanceling(maze)
-    solver.solve()
