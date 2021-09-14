@@ -24,6 +24,7 @@ class Tree:
         return node
 
     def gather(self, node):
+        yield node.value
         while node.parent:
             node = node.parent
             yield node.value
@@ -63,12 +64,15 @@ class MazeRunner:
 class DeadEndCanceling:
     def __init__(self, maze:np.ndarray):
         self.maze = maze
-        self.shape = self.maze.shape
+        self.shape = np.array(self.maze.shape)
+        self.window_size = tuple((self.shape * (750 / max(self.shape))).astype(np.int))[::-1]
         self.solvers = self.init_solvers()
 
     def init_solvers(self):
-        start_points = self.get_start_indices()
-        solvers = [MazeRunner(i, self.maze) for i in start_points]
+        solvers = []
+        for start_point in self.get_start_indices():
+            solvers.append(MazeRunner(start_point, self.maze))
+            self.maze[start_point] = 2
         print("{} solvers initialized".format(len(solvers)))
         return solvers
 
@@ -96,7 +100,8 @@ class DeadEndCanceling:
                         self.draw_solution(solution)
                         break
 
-                cv2.imshow("img", self.get_rgb_img())
+                img = self.get_rgb_img()
+                cv2.imshow("img", img)
                 cv2.waitKey(int(not bool(solution)))
 
     def draw_solution(self, solution):
@@ -111,5 +116,5 @@ class DeadEndCanceling:
         img[self.maze == 1] = [132,132,132] # color of the non-travelled path
         img[self.maze == 2] = [240, 240, 0] # color of the generic unfinished route
         img[self.maze == 3] = [0, 255, 255] # color of the winner route
-        img = cv2.resize(img, (700, 700), interpolation=cv2.INTER_AREA)
+        img = cv2.resize(img, self.window_size, interpolation=cv2.INTER_AREA)
         return img
