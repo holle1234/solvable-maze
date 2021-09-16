@@ -26,18 +26,22 @@ class RandomMaze:
         # Picks one of the free neighbours and sets it to be searched for the next iteration
         # Produces a fully connected maze
 
+        cv2_line = cv2.line
+        visited_add = visited.add
+        intersections_pop = intersections.pop
+
         while intersections:
             point = intersections[-1]
             values = converted_coords[point] - visited
             if values:
                 new_point = values.pop()
-                visited.add(new_point)
-                cv2.line(self.maze, data[point], data[new_point], 1, 1)
+                visited_add(new_point)
+                cv2_line(self.maze, data[point], data[new_point], 1, 1)
                 intersections.append(new_point)
                 if not values:
-                    intersections.pop(-2)
+                    intersections_pop(-2)
             else:
-                intersections.pop()
+                intersections_pop()
 
         self.pad_right()
         self.pad_down()
