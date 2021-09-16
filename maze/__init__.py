@@ -59,13 +59,15 @@ class RandomMaze:
 
         h, w = self.shape
         hr, wr = range(1, h - 1, 2), range(1, w - 1, 2)
-        points, con_table = OrderedDict(), OrderedDict()
-        for ind, (hh, ww) in enumerate(self.randomized_product(wr, hr)):
-            con_table[(hh, ww)] = ind
+        points, con_table = {}, {}
+
+        for ind, key in enumerate(self.randomized_product(wr, hr)):
+            con_table[key] = ind
         for hh, ww in con_table.keys():
             n = [(hh + 2, ww), (hh - 2, ww), (hh, ww + 2), (hh, ww - 2)]
             points[con_table[(hh, ww)]] = {con_table[i] for i in n if i in con_table}
         return points, list(con_table.keys())
+
 
     def randomized_product(self, h, w):
         gens = [zip_longest([], w, fillvalue=i) for i in h]
