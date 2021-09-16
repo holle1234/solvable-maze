@@ -37,9 +37,10 @@ class RandomMaze:
                 new_point = values.pop()
                 visited_add(new_point)
                 cv2_line(self.maze, data[point], data[new_point], 1, 1)
-                intersections.append(new_point)
                 if not values:
-                    intersections_pop(-2)
+                    intersections[-1] = new_point
+                else:
+                    intersections.append(new_point)
             else:
                 intersections_pop()
 
